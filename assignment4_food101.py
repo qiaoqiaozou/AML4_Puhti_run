@@ -28,8 +28,8 @@ root_dir = os.path.join(os.environ.get("TMPDIR", "/tmp"), "food101")
 train_dataset = Food101(root=root_dir, split="train", download=True, transform=transform)
 test_dataset = Food101(root=root_dir, split="test", download=True, transform=transform)
 
-train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True, num_workers=2)
-test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False, num_workers=2)
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=2)
+test_loader = DataLoader(test_dataset, batch_size=256, shuffle=False, num_workers=2)
 
 @torch.no_grad()
 def accuracy(model, data_loader, device):
@@ -49,15 +49,16 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
 
 model.train()
-running_loss = 0.0
-for X, y in train_loader:
-    X, y = X.to(device), y.to(device)
-    optimizer.zero_grad()
-    loss = criterion(model(X), y)
-    loss.backward()
-    optimizer.step()
-    running_loss += loss.item()
-print(f"Training loss after 1 epoch: {running_loss / len(train_loader):.4f}")
+for epoch in range(3):  # 训练 3 个 epoch（你可以改为 5）
+    running_loss = 0.0
+    for X, y in train_loader:
+        X, y = X.to(device), y.to(device)
+        optimizer.zero_grad()
+        loss = criterion(model(X), y)
+        loss.backward()
+        optimizer.step()
+        running_loss += loss.item()
+    print(f"Training loss after epoch {epoch + 1}: {running_loss / len(train_loader):.4f}")
 
 fp32_acc = accuracy(model, test_loader, device)
 print(f"2) Test accuracy of pre-trained model after fine-tuning and before quantization: {fp32_acc:.2f}%")
