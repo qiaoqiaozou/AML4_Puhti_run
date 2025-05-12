@@ -23,8 +23,10 @@ transform = transforms.Compose([
                          std=[0.229, 0.224, 0.225])
 ])
 
-train_dataset = Food101(root="./data", split="train", download=True, transform=transform)
-test_dataset = Food101(root="./data", split="test", download=True, transform=transform)
+root_dir = os.path.join(os.environ.get("TMPDIR", "/tmp"), "food101")
+
+train_dataset = Food101(root=root_dir, split="train", download=True, transform=transform)
+test_dataset = Food101(root=root_dir, split="test", download=True, transform=transform)
 
 train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True, num_workers=2)
 test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False, num_workers=2)
