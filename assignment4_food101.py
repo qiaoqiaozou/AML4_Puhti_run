@@ -49,7 +49,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
 
 model.train()
-for epoch in range(3):  # 训练 3 个 epoch（你可以改为 5）
+for epoch in range(5):  # train 5 epochs
     running_loss = 0.0
     for X, y in train_loader:
         X, y = X.to(device), y.to(device)
